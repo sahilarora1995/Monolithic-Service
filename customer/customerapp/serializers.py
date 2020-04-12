@@ -5,3 +5,4 @@ class customerSerializers(serializers.ModelSerializer):
     class Meta:
         model=customer
         fields='__all__'
+

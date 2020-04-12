@@ -8,7 +8,6 @@ from .models import customer
 from .serializers import customerSerializers
 
 # Create your views here.
-
 class customerList(APIView):
     def get(self,request):
         customer1=customer.objects.all()
@@ -54,4 +53,3 @@ class customerDetail(APIView):
         customer = self.get_object(id)
         customer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
