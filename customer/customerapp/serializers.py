@@ -6,3 +6,8 @@ class customerSerializers(serializers.ModelSerializer):
         model=customer
         fields='__all__'
 
+class customerpatchSerializers(serializers.ModelSerializer):
+    class Meta:
+        model=customer
+        fields='__all__'
+

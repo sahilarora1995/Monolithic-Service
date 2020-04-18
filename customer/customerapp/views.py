@@ -5,10 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import customer
-from .serializers import customerSerializers
+from .serializers import customerSerializers,customerpatchSerializers
 from rest_framework.parsers import JSONParser
 import requests
 import json
+from django.http import JsonResponse
 # Create your views here.
 class customerList(APIView):
     def get(self,request):
@@ -18,8 +19,7 @@ class customerList(APIView):
 
 
     def post(self, request, format=None):
-        #data = JSONParser().parse(request)
-        serializer = customerSerializers(data=data)
+        serializer = customerSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -36,24 +36,37 @@ class customerDetail(APIView):
         except customer.DoesNotExist:
             raise Http404
 
+    def patch(self, request, id):
+        print("patch method")
+        customer = self.get_object(id)
+        print("got data.............")
+        serializer = customerSerializers(customer, data=request.data,
+                                         partial=True)  # set partial=True to update a data partially
+        print(serializer.is_valid())
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     def get(self, request, id, format=None):
         customer = self.get_object(id)
         prod={}
         p={}
         resp={}
         i=0
+        l=[]
         print(customer.cart[0])
         for x in customer.cart:
             r = requests.get('http://localhost:8080/product/'+ x + '/', auth=('sahilp', '9555497667sS$'))
             prod={}
             prod["ProductName"]= json.loads(r.text)["productname"]
             prod["ProductId"] = json.loads(r.text)["productId"]
+            l.append(prod)
             p[i]=prod
             i=i+1
         serializer = customerSerializers(customer)
         resp["customer"]=serializer.data
         resp["customersProductDetails"]= p
-        return Response(resp)
+        return Response(l)
 
     def put(self, request, Id, format=None):
         snippet = self.get_object(Id)
