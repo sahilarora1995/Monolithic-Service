@@ -51,7 +51,7 @@ class customerDetail(APIView):
         customer = self.get_object(id)
         prod={}
         p={}
-        resp={}
+        regitsp={}
         i=0
         l=[]
         print(customer.cart[0])
@@ -59,7 +59,7 @@ class customerDetail(APIView):
             r = requests.get('http://localhost:8080/product/'+ x + '/', auth=('sahilp', '9555497667sS$'))
             prod={}
             prod["ProductName"]= json.loads(r.text)["productname"]
-            prod["ProductId"] = json.loads(r.text)["productId"]
+            prod["ProductId"] = json.loads(r.text)["id"]
             l.append(prod)
             p[i]=prod
             i=i+1
